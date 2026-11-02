@@ -171,3 +171,16 @@ Tests cover preprocessing, evaluation, gradient flow, checkpoint loading, offlin
 - Abdul-Mageed, M., Elmadany, A., & Nagoudi, E. M. B. (2021). [ARBERT & MARBERT: Deep Bidirectional Transformers for Arabic](https://aclanthology.org/2021.acl-long.551/).
 
 The dataset repository's license notice is retained in [docs/ARSARCASM_LICENSE.txt](docs/ARSARCASM_LICENSE.txt). Dataset and pretrained model usage remain subject to their respective terms.
+
+## Gradio on Hugging Face Spaces
+
+The Gradio interface uses the same trained model and shared source package as Streamlit. It includes single-text analysis, batch analysis, and experiment results. CPU inference is supported; on ZeroGPU, GPU work runs inside a `spaces.GPU` function with one inference request at a time. The checkpoint loads before the timed GPU request.
+
+To run locally:
+
+```bash
+python -m pip install -r deployment/gradio/requirements.txt
+python gradio_app.py
+```
+
+To deploy to `yahya-ai10/maqsad-demo`, authenticate to Hugging Face with write access and run `python scripts/deploy_space.py`. The script uploads the interface, shared Python package, and Space configuration; it does not upload model weights. Space build and ZeroGPU execution must be checked on the hosting service after deployment.
