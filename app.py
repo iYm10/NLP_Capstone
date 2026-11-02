@@ -167,7 +167,7 @@ with research:
     st.bar_chart(frame.set_index('Model')[['Sentiment macro-F1','Sarcasm F1']],horizontal=True,color=['#0d9488','#7371c7'])
     st.dataframe(frame.style.format({'Sentiment macro-F1':'{:.2%}','Sarcasm F1':'{:.2%}'},na_rep='Not trained'),hide_index=True,width='stretch')
     st.info('Joint training did not improve sentiment in this run: 65.57% versus 65.71% macro-F1. Multiple seeds are needed before drawing a robust conclusion.')
-    st.caption('Neural metrics come from the supplied Colab reports; local baseline metrics were reproduced here. Metrics do not imply that neural weights are installed in this app. Missing sarcasm scores indicate an untrained task, not zero performance.')
+    st.caption('Results are from the ArSarcasm-v2 test set with seed 42. Missing sarcasm scores indicate a task the model was not trained to predict.')
     with st.expander('Dialect coverage and limitations'):
         st.write('The dataset contains historical tweets and uneven dialect representation. The Maghrebi test group has only two examples; its score is not a reliable regional estimate. Gulf labels cover several countries. Single tweets may lack the context needed to interpret sarcasm.')
 st.divider()

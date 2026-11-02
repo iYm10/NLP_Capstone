@@ -1,148 +1,173 @@
-# Maqsad — Arabic Sarcasm & Sentiment Analysis
+# Maqsad | Arabic Sarcasm and Sentiment Analysis
 
-Understand sentiment behind Arabic sarcasm with a reproducible NLP capstone.
+Maqsad is an NLP capstone project that explores how sarcasm affects sentiment analysis in Arabic. It compares a character-based TF-IDF baseline with two fine-tuned MARBERT models: a sentiment-only model and a joint model that predicts both sarcasm and sentiment.
 
-> **Execution status:** The CPU baseline notebook was executed locally. User-supplied Colab reports record completed MARBERT training on Tesla T4 (seed 42): joint sentiment macro-F1 **65.57%**, sentiment-only **65.71%**, and joint sarcasm F1 **58.56%**. Reports are in `reports/colab`. The user-executed GPU notebook is preserved in the repository (all nine code cells have outputs and no saved errors). Checkpoint weights were not supplied; neural inference has not been independently reproduced here.
+The project includes reproducible experiments, dialect-level evaluation, and an interactive Streamlit application for analyzing Arabic text.
+
+[Live demo](https://nlpcapstone-ya.streamlit.app/) · [Trained model](https://huggingface.co/yahya-ai10/maqsad-marbert) · [Training notebook](notebooks/02_marbert_finetuning.ipynb) · [Experiment report](reports/EXPERIMENT_REPORT.md)
 
 ## Research question
 
-**Does jointly learning sarcasm improve Arabic sentiment classification compared with sentiment-only fine-tuning?**
+**Does learning sarcasm and sentiment together improve Arabic sentiment classification?**
 
-An Arabic comment can contain positive words while expressing frustration. Maqsad predicts both sarcasm and sentiment, and evaluates performance across dialect groups. The current baseline establishes a reference; it does not prove the joint-learning hypothesis.
+Consider the phrase:
 
-## Included
+> يا سلام على الخدمة، ساعتين وأنا أنتظر!
 
-- An **executed notebook** with dataset audit, full CPU baseline training, held-out metrics, plots and inference.
-- A **GPU notebook** for full MARBERT joint learning and the matched sentiment-only experiment.
-- A shared transformer encoder with separate sarcasm and sentiment heads.
-- Validation-based checkpoint selection, local checkpoint inference, and reproducible data splitting.
-- A Streamlit demo using the measured CPU baseline.
-- Unit and offline end-to-end training tests; GitHub Actions runs tests automatically.
-- Dataset documentation, model limitations, citations and experiment methodology in English.
+Positive wording can express a negative opinion. This project investigates whether additional sarcasm supervision helps a model recognize that distinction.
 
-## Quick start
+## Dataset
 
-Python 3.10+ is required; the recorded run used Python 3.12. Create an isolated environment from the repository root:
+The experiments use [ArSarcasm-v2](https://github.com/iabufarha/ArSarcasm-v2), which contains **15,548 Arabic tweets** annotated for sarcasm, sentiment, and dialect.
+
+| Split | Examples |
+|---|---:|
+| Training, after filtering and validation split | 10,605 |
+| Validation | 1,872 |
+| Official test set | 3,000 |
+
+Four training examples overlap with normalized test text, and 67 additional training duplicates are removed before splitting. The official test set remains unchanged. Dialect labels are used for evaluation, not as model inputs.
+
+See the [dataset card](docs/DATASET.md) for label definitions, preprocessing, and data integrity checks.
+
+## Methodology
+
+Three models are compared:
+
+1. **TF-IDF baseline:** character 2–5-grams with separate class-balanced logistic regression classifiers.
+2. **MARBERT sentiment-only:** a shared pretrained encoder with a sentiment classification head.
+3. **MARBERT joint:** the same encoder with separate sentiment and sarcasm heads, trained using the sum of their cross-entropy losses.
+
+Both neural experiments use three epochs, batch size 8, sequence length 128, learning rate 2e-5, and seed 42. The best checkpoint is selected using validation sentiment macro-F1. Training was performed on a Tesla T4 in Google Colab.
+
+## Results
+
+| Model | Sentiment macro-F1 | Sarcasm F1 |
+|---|---:|---:|
+| TF-IDF baseline | 56.75% | 54.04% |
+| MARBERT sentiment-only | **65.71%** | — |
+| MARBERT joint | 65.57% | **58.56%** |
+
+Sarcasm F1 refers to the sarcastic class. The sentiment-only model is not trained for sarcasm detection.
+
+Both MARBERT models outperform the baseline on sentiment. However, joint learning is **0.15 percentage points below** sentiment-only training in this experiment, so the results do not demonstrate an improvement from joint supervision. Further runs with multiple seeds are needed to assess whether the difference is consistent.
+
+Full metrics and dialect-level results are available in [reports/](reports/) and the [experiment report](reports/EXPERIMENT_REPORT.md).
+
+## Application
+
+Try the application: **[Maqsad on Streamlit](https://nlpcapstone-ya.streamlit.app/)**.
+
+The Streamlit interface provides:
+
+- Single-text analysis with Arabic input and example phrases.
+- Batch analysis for up to 16 texts.
+- Sarcasm and sentiment predictions with model scores.
+- CSV export and model comparison charts.
+
+### Run locally
+
+Python 3.12 is recommended. From the repository root:
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e ".[dev,app]"
-python scripts/download_data.py
-python -m maqsad.baseline
-streamlit run app.py
 ```
 
-On Windows activate with `.venv\Scripts\activate`. The baseline does not require a GPU or a Hugging Face account. Data is downloaded from an immutable upstream revision with SHA-256 verification. Raw data and trained artifacts are generated locally and excluded from Git.
+Activate the environment:
 
-To reuse the main package versions from the recorded run, add `-c constraints-tested.txt` to the installation command. This file is not a complete transitive lockfile.
+```bash
+# Windows Command Prompt
+.venv\Scripts\activate
 
-To reproduce the executed notebook:
+# macOS / Linux
+source .venv/bin/activate
+```
+
+Install dependencies and start the application:
+
+```bash
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
+
+MARBERT downloads from [Hugging Face](https://huggingface.co/yahya-ai10/maqsad-marbert) on the first analysis. The checkpoint and loaded model are cached for subsequent requests. The initial download requires internet access and can take several minutes. CPU inference is supported, but the full model requires sufficient memory.
+
+To use the lightweight baseline, select **TF-IDF baseline** and click **Prepare baseline model**, or run:
+
+```bash
+python -m maqsad.baseline
+```
+
+### Deployment
+
+For Streamlit Community Cloud, select repository `iYm10/NLP_Capstone`, branch `main`, entry point `app.py`, and Python 3.12. Dependencies are installed from `requirements.txt`. Available hosting memory must be sufficient for the model; deployment resource requirements have not been benchmarked.
+
+Optional settings:
+
+| Variable | Purpose | Default |
+|---|---|---|
+| `MAQSAD_MODEL_REPO` | Hosted checkpoint repository | `yahya-ai10/maqsad-marbert` |
+| `MAQSAD_MODEL_REVISION` | Model revision; use a commit for reproducibility | `main` |
+| `MAQSAD_CHECKPOINT` | Complete local checkpoint directory | `artifacts/marbert-joint` |
+
+A complete local checkpoint takes precedence over downloading. Large model weights are stored separately from the source code.
+
+## Reproduce the experiments
+
+Install the development dependencies:
+
+```bash
+python -m pip install -e ".[train,dev,app]"
+```
+
+**Baseline notebook:**
 
 ```bash
 python -m ipykernel install --sys-prefix --name python3
 python scripts/execute_notebook.py
 ```
 
-The runner saves outputs into `notebooks/01_data_and_baseline.ipynb` and fails on cell errors. Its training step can take several minutes on a CPU. Open the notebook directly on GitHub to inspect the saved outputs.
-
-## Full fine-tuning
-
-[Open the training notebook in Google Colab](https://colab.research.google.com/github/iYm10/NLP_Capstone/blob/main/notebooks/02_marbert_finetuning.ipynb). Select a GPU runtime and run the cells in order. The notebook automatically clones this repository and asks you to authorize Google Drive storage. Checkpoints are written directly to a timestamped `MyDrive/Maqsad/artifacts` directory. At completion, a small metrics archive is exported for GitHub; large weights remain in Drive. Save the executed notebook separately. These Colab-specific steps are prepared but have not been executed from this environment.
-
-Use a GPU runtime with access to Hugging Face. Install the PyTorch build appropriate to that runtime, then:
+**MARBERT experiments:** open the [training notebook in Colab](https://colab.research.google.com/github/iYm10/NLP_Capstone/blob/main/notebooks/02_marbert_finetuning.ipynb) with a GPU runtime, or run:
 
 ```bash
-python -m pip install -e ".[train,dev]"
-python -m maqsad.train --task sentiment --output artifacts/marbert-sentiment
-python -m maqsad.train --task joint --output artifacts/marbert-joint
+python -m maqsad.train --task sentiment --revision 88e1fa192dd723cf0b3563500aec46209762eb22 --output artifacts/marbert-sentiment
+python -m maqsad.train --task joint --revision 88e1fa192dd723cf0b3563500aec46209762eb22 --output artifacts/marbert-joint
 ```
 
-For strict comparisons use the same `--revision <Hugging-Face-commit>`, `--seed`, epochs, batch size and sequence length for both commands. `notebooks/02_marbert_finetuning.ipynb` resolves one immutable model revision and runs both experiments. Default settings: three epochs, batch size eight, maximum length 128, AdamW learning rate 2e-5. Memory requirements depend on the GPU; reduce batch size when necessary. CPU fine-tuning is supported by the CLI but can be very slow.
+Use matching seeds and settings for both conditions and separate output directories for each run. Data files are downloaded from a pinned revision and checked against SHA-256 hashes. The baseline package versions are recorded in `constraints-tested.txt`; this is not a complete dependency lockfile. Neural run metadata is in `reports/colab/run.json`.
 
-Each run saves `weights.pt`, tokenizer files, encoder configuration and `metrics.json` in its output folder. Separate output folders are required for separate tasks/seeds. Metrics include the resolved model revision when available. Aggregate MARBERT scores are published in `reports/colab`; fine-tuned weights remain in the training Drive folder.
-
-```python
-from maqsad.inference import predict_transformer
-results = predict_transformer(["يا سلام على الخدمة، ساعتين وأنا أنتظر!"])
-```
-
-## Evaluation protocol
-
-1. Keep the official 3,000-row test set intact.
-2. Remove training texts overlapping normalized test text, and deduplicate remaining training text.
-3. Reserve 15% of the remaining training data for stratified validation, seed 42.
-4. Fit preprocessing features on training only. Select baseline C on validation.
-5. Select each MARBERT checkpoint by validation sentiment macro-F1 for a matched primary comparison.
-6. Evaluate the selected model once on test. Report sarcastic-class F1, sentiment macro-F1, class-level and dialect-level results.
-7. Repeat neural experiments with at least three matched seeds before claiming consistent improvement.
-
-The official test set may itself contain repeated text; counts are reported rather than silently changing the benchmark. Minority dialect results need cautious interpretation. The Maghrebi test group contains only two tweets.
-
-## Repository layout
+## Project structure
 
 ```text
-app.py                         Streamlit baseline demo
-src/maqsad/data.py             Pinned download, validation and splitting
-src/maqsad/baseline.py         CPU training and inference
-src/maqsad/model.py            Shared encoder and two task heads
-src/maqsad/train.py            Neural fine-tuning and evaluation
-src/maqsad/inference.py        Local neural checkpoint inference
-src/maqsad/evaluation.py       Aggregate and dialect metrics
-notebooks/                    Executed baseline and GPU experiment
-reports/                      Measured results and plots
-scripts/                      Dataset and notebook entry points
-tests/                        Unit and integration tests
-docs/                         Dataset and model documentation
+app.py                  Interactive Streamlit application
+src/maqsad/             Data preparation, models, training and inference
+notebooks/              Baseline and MARBERT experiments
+reports/                Evaluation metrics, figures and experiment report
+docs/                   Dataset and model cards
+scripts/                Data download and notebook execution
+tests/                  Pipeline, checkpoint and interface tests
+requirements.txt        Application dependencies
 ```
 
-## Validation
+Run tests with:
 
 ```bash
-python -m pip install -e ".[train,dev,app]"
 python -m pytest -q
 ```
 
-Neural tests use a tiny locally constructed BERT for offline software validation. They test gradient flow, a training epoch, checkpoint serialization and inference; they do **not** demonstrate MARBERT performance.
+Tests cover preprocessing, evaluation, gradient flow, checkpoint loading, offline training, and interface interactions. Small synthetic models validate the code independently of the full MARBERT checkpoint.
 
-## Data and responsible interpretation
+## Limitations
 
-ArSarcasm-v2 contains **15,548 tweets**: 12,548 training and 3,000 test examples, with sarcasm, sentiment and dialect annotations. See [DATASET.md](docs/DATASET.md), [MODEL_CARD.md](docs/MODEL_CARD.md) and [the upstream repository](https://github.com/iabufarha/ArSarcasm-v2).
+- Results are based on one training seed.
+- Historical tweets may not generalize to current customer reviews or other domains.
+- Sarcasm can require context beyond a single text.
+- Dialect representation is uneven; the Maghrebi test group has only two examples.
+- Model scores are uncalibrated and should not be interpreted as certainty.
 
-The data is historical social-media language, not a representative customer-service benchmark. Predictions can be wrong and model scores are uncalibrated. Do not interpret sarcasm labels as definitive judgments about a person. No explanation-generation or dialect-classification capability is claimed.
+## References
 
-## Citation
+- Abu Farha, I., Zaghouani, W., & Magdy, W. (2021). [Overview of the WANLP 2021 Shared Task on Sarcasm and Sentiment Detection in Arabic](https://aclanthology.org/2021.wanlp-1.36/).
+- Abdul-Mageed, M., Elmadany, A., & Nagoudi, E. M. B. (2021). [ARBERT & MARBERT: Deep Bidirectional Transformers for Arabic](https://aclanthology.org/2021.acl-long.551/).
 
-Abu Farha, Ibrahim; Zaghouani, Wajdi; and Magdy, Walid. 2021. [Overview of the WANLP 2021 Shared Task on Sarcasm and Sentiment Detection in Arabic](https://aclanthology.org/2021.wanlp-1.36/).
-
-Abdul-Mageed, Muhammad; Elmadany, AbdelRahim; and Nagoudi, El Moatez Billah. 2021. [ARBERT & MARBERT: Deep Bidirectional Transformers for Arabic](https://aclanthology.org/2021.acl-long.551/).
-
-The upstream dataset repository provides an MIT license; its notice is retained in `docs/ARSARCASM_LICENSE.txt`. Raw tweets are not redistributed in this repository. The pretrained model has its own model card and terms.
-
-## Interactive dashboard
-
-Run `streamlit run app.py`. The dashboard includes a single-text playground, batch analysis (one text per line), CSV export, and recorded benchmark comparisons. Its English interface supports right-to-left Arabic input.
-
-The baseline works after `python -m maqsad.baseline`. To enable trained MARBERT, copy the **entire** `marbert-joint` checkpoint directory from your training Drive folder to `artifacts/marbert-joint`, or set `MAQSAD_CHECKPOINT` to its absolute path. Include weights.pt, metrics.json, config.json and all tokenizer files. Install the train extra with `pip install -e ".[train,app]"`. The model selector identifies which model actually runs; uploaded aggregate metrics alone do not enable inference. Only use trusted checkpoint files.
-
-## Streamlit Community Cloud deployment
-
-Select this GitHub repository, branch `main`, entry point `app.py`, and Python 3.12. The root `requirements.txt` installs the package and app/training dependencies. No secret is required for the baseline. On a fresh instance, use **Prepare baseline model** in the sidebar; this downloads the checksum-verified dataset and trains the lightweight model. It can take several minutes and needs outbound access to raw.githubusercontent.com. Generated files may need rebuilding after the host restarts.
-
-Model files are hosted separately at `yahya-ai10/maqsad-marbert` and are downloaded automatically on the first MARBERT analysis. They do not need to be committed to GitHub. A complete local checkpoint can optionally be supplied through MAQSAD_CHECKPOINT. See the hosted-checkpoint section below for caching and revision configuration.
-
-Full MARBERT is a large CPU model and may exceed small free-host memory limits. Hosting readiness for MARBERT has not been verified without the weights. The baseline and benchmark viewer are independently usable.
-
-## Hosted MARBERT checkpoint
-
-The app now selects MARBERT by default and downloads the checkpoint from `yahya-ai10/maqsad-marbert` on its first analysis. A complete local checkpoint takes precedence. The downloaded snapshot is cached, and one loaded model is reused across requests without caching user text. First startup can take several minutes and requires network access and adequate disk/RAM; this does not retrain the model.
-
-Optional environment settings:
-
-- `MAQSAD_MODEL_REPO`: defaults to `yahya-ai10/maqsad-marbert`.
-- `MAQSAD_MODEL_REVISION`: defaults to `main`; use an immutable Hub commit for reproducible deployment.
-- `MAQSAD_CHECKPOINT`: complete local checkpoint directory, if available.
-
-The hosted upload was reported successful by the user. This environment still blocks Hugging Face, so the actual hosted weights have not been downloaded or independently evaluated here. Tests cover local priority, the download configuration, incomplete-checkpoint rejection and offline model inference.
-
-The project constrains `huggingface-hub` below version 1 for compatibility with Transformers 4.x. The Colab upload warning about Hub 2.4 versus datasets does not invalidate a successful upload. No retraining or re-upload is required just because of that warning.
+The dataset repository's license notice is retained in [docs/ARSARCASM_LICENSE.txt](docs/ARSARCASM_LICENSE.txt). Dataset and pretrained model usage remain subject to their respective terms.
