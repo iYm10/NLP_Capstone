@@ -41,9 +41,12 @@ checkpoint = Path(os.environ.get('MAQSAD_CHECKPOINT', str(ROOT/'artifacts/marber
 required_files = ['weights.pt', 'metrics.json', 'config.json', 'tokenizer_config.json']
 missing_files = [name for name in required_files if not (checkpoint/name).is_file()]
 ready_joint = not missing_files
-options = ['TF-IDF baseline']
-if ready_joint:
-    options.insert(0, 'MARBERT joint')
+options = ['MARBERT joint', 'TF-IDF baseline']
+
+@st.cache_resource
+def hosted_checkpoint(local_path, repo_id, revision):
+    from maqsad.checkpoint import resolve_checkpoint
+    return resolve_checkpoint(local_path, repo_id, revision)
 with st.sidebar:
     st.markdown('## ✦ Maqsad')
     st.caption('ARABIC LANGUAGE STUDIO')
@@ -51,7 +54,7 @@ with st.sidebar:
     engine = st.selectbox('Analysis model', options)
     st.caption('The selected model is used for both single and batch analysis.')
     if not ready_joint:
-        st.info('MARBERT inference is not ready. Missing checkpoint files: ' + ', '.join(missing_files))
+        st.info('MARBERT will download from Hugging Face on first analysis. The first request may take several minutes.')
     if not (ROOT/'artifacts/baseline.joblib').exists():
         st.caption('Prepare the lightweight baseline to try the app while the neural checkpoint is unavailable.')
         if st.button('Prepare baseline model'):
@@ -67,7 +70,7 @@ with st.sidebar:
     st.caption('Sarcasm and sentiment are separate predictions. A positive phrase can express a negative opinion.')
     st.caption('Scores are uncalibrated model outputs, not certainty or judgments about a person.')
     with st.expander('Connect your trained model'):
-        st.write('Copy the complete marbert-joint folder from Drive into artifacts/marbert-joint, including weights, metrics, configuration and tokenizer files. Restart the app. A custom location can be set with MAQSAD_CHECKPOINT.')
+        st.write('Hosted model: yahya-ai10/maqsad-marbert. A complete local checkpoint takes priority. Configure MAQSAD_CHECKPOINT, MAQSAD_MODEL_REPO or MAQSAD_MODEL_REVISION to override the defaults.')
 
 st.markdown('''<div class="hero"><div class="eyebrow">WORDS · TONE · MEANING</div><h1>Read between the lines.</h1><p>Explore sarcasm and sentiment in Arabic. Try a phrase, compare a collection, and discover what the model sees.</p><span class="pill">Maqsad / Arabic Language Studio</span></div>''',unsafe_allow_html=True)
 
@@ -75,7 +78,8 @@ st.markdown('''<div class="hero"><div class="eyebrow">WORDS · TONE · MEANING</
 def analyze(texts):
     if engine == 'MARBERT joint':
         from maqsad.inference import predict_transformer
-        return predict_transformer(texts, checkpoint)
+        resolved = hosted_checkpoint(str(checkpoint), os.environ.get('MAQSAD_MODEL_REPO', 'yahya-ai10/maqsad-marbert'), os.environ.get('MAQSAD_MODEL_REVISION', 'main'))
+        return predict_transformer(texts, resolved)
     path = ROOT/'artifacts/baseline.joblib'
     if not path.exists():
         raise FileNotFoundError('Baseline model missing. Run: python -m maqsad.baseline')

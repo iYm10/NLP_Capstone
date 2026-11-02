@@ -10,7 +10,9 @@ def open_app(monkeypatch):
     # Only the checkpoint-presence check is stubbed; UI interactions run normally.
     original=Path.exists
     monkeypatch.setattr(Path,'exists',lambda p: True if p.name=='baseline.joblib' else original(p))
-    return AppTest.from_file(str(Path(__file__).resolve().parents[1]/'app.py'), default_timeout=20).run()
+    app = AppTest.from_file(str(Path(__file__).resolve().parents[1]/'app.py'), default_timeout=20).run()
+    app.selectbox[0].select('TF-IDF baseline').run()
+    return app
 
 
 def test_single_result_and_stale_input(monkeypatch):
@@ -43,7 +45,7 @@ def test_fresh_host_prepares_baseline(monkeypatch):
     calls = []
     monkeypatch.setattr(maqsad.baseline, 'train_baseline', lambda **kwargs: calls.append(kwargs))
     app = AppTest.from_file(str(Path(__file__).resolve().parents[1] / 'app.py'), default_timeout=20).run()
-    assert any('weights.pt' in info.value for info in app.info)
+    assert any('Hugging Face' in info.value for info in app.info)
     next(b for b in app.button if b.label == 'Prepare baseline model').click().run()
     assert not app.exception
     assert len(calls) == 1

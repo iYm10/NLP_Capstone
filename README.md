@@ -132,3 +132,17 @@ Select this GitHub repository, branch `main`, entry point `app.py`, and Python 3
 The uploaded `artifacts/marbert-joint` folder currently contains configuration, metrics and tokenizer files but **does not contain weights.pt**. Those metadata files alone cannot perform MARBERT inference. The app lists missing files explicitly. For local deployment, place the trained weights.pt alongside the uploaded files. For hosted deployment, provision the complete checkpoint on the hosting machine and optionally set MAQSAD_CHECKPOINT to its directory. Merely keeping weights on your Windows PC does not make them available to Streamlit Cloud. Large weights should be distributed using an appropriate model/artifact host, not ordinary Git commits.
 
 Full MARBERT is a large CPU model and may exceed small free-host memory limits. Hosting readiness for MARBERT has not been verified without the weights. The baseline and benchmark viewer are independently usable.
+
+## Hosted MARBERT checkpoint
+
+The app now selects MARBERT by default and downloads the checkpoint from `yahya-ai10/maqsad-marbert` on its first analysis. A complete local checkpoint takes precedence. The downloaded snapshot is cached, and one loaded model is reused across requests without caching user text. First startup can take several minutes and requires network access and adequate disk/RAM; this does not retrain the model.
+
+Optional environment settings:
+
+- `MAQSAD_MODEL_REPO`: defaults to `yahya-ai10/maqsad-marbert`.
+- `MAQSAD_MODEL_REVISION`: defaults to `main`; use an immutable Hub commit for reproducible deployment.
+- `MAQSAD_CHECKPOINT`: complete local checkpoint directory, if available.
+
+The hosted upload was reported successful by the user. This environment still blocks Hugging Face, so the actual hosted weights have not been downloaded or independently evaluated here. Tests cover local priority, the download configuration, incomplete-checkpoint rejection and offline model inference. The earlier deployment section's manual-provisioning requirement is superseded by this automatic download route.
+
+The project constrains `huggingface-hub` below version 1 for compatibility with Transformers 4.x. The Colab upload warning about Hub 2.4 versus datasets does not invalidate a successful upload. No retraining or re-upload is required just because of that warning.
