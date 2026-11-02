@@ -10,7 +10,7 @@ The local `artifacts/baseline.joblib` is reproducible with `python -m maqsad.bas
 
 MARBERT's CLS representation feeds a dropout layer and two linear heads: two sarcasm classes and three sentiment classes. Joint training minimizes the sum of the two cross-entropy losses. The sentiment-only control has the same encoder and sentiment head but excludes sarcasm loss. Its untrained sarcasm head is not reported or used for inference.
 
-Checkpoint selection uses validation sentiment macro-F1. Full training and matched ablation are not yet executed in this environment; no neural quality metrics are claimed. Offline tiny-BERT tests validate software mechanics only.
+Checkpoint selection uses validation sentiment macro-F1. User-supplied Colab reports now record completed full training and a matched single-seed ablation; see reports/colab and the updated experiment report. Weights were not supplied, so neural inference has not been independently reproduced in this environment. Offline tiny-BERT tests validate software mechanics only.
 
 ## Intended use and limitations
 

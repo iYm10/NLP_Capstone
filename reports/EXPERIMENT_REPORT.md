@@ -1,3 +1,23 @@
+# Updated Colab experiment results
+
+User-supplied `maqsad-results.zip` contains aggregate metrics and run metadata for both three-epoch MARBERT runs on Tesla T4, seed 42. The reported split audit matches the local baseline. These reports have been inspected but predictions have not been independently regenerated: weights and the executed GPU notebook were not supplied.
+
+| Model | Sentiment macro-F1 | Sarcastic-class F1 |
+|---|---:|---:|
+| TF-IDF baseline | 56.75% | 54.04% |
+| MARBERT sentiment-only | 65.71% | Not trained |
+| MARBERT joint | 65.57% | 58.56% |
+
+Joint learning is lower than sentiment-only by approximately **0.15 percentage points** in this single-seed sentiment comparison. It does not support a claim that joint training improves sentiment. Both neural runs improve over the baseline in sentiment, while joint sarcasm F1 is about 4.52 points above baseline. Statistical significance cannot be inferred from aggregate single-run scores. The selected validation checkpoint is epoch 1 for sentiment-only and epoch 2 for joint. Further matched seeds and paired prediction analysis are needed for stronger conclusions.
+
+Source reports: `reports/colab/`. Training run: `20261102T192207Z`; model revision: `88e1fa192dd723cf0b3563500aec46209762eb22`. No weights are committed to Git.
+
+---
+
+## Historical local execution report
+
+The following section records the original CPU execution before the Colab results were supplied. Its pending-training statements describe that earlier environment.
+
 # Experiment report
 
 ## Execution status

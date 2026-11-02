@@ -1,0 +1,103 @@
+{
+  "configuration": {
+    "model": "UBC-NLP/MARBERT",
+    "revision": "88e1fa192dd723cf0b3563500aec46209762eb22",
+    "task": "sentiment",
+    "epochs": 3,
+    "batch_size": 8,
+    "max_length": 128,
+    "learning_rate": 2e-05,
+    "seed": 42,
+    "data_dir": "data/raw",
+    "output": "/content/drive/MyDrive/Maqsad/artifacts/20261102T192207Z/marbert-sentiment"
+  },
+  "resolved_model_commit": "88e1fa192dd723cf0b3563500aec46209762eb22",
+  "device": "cuda",
+  "audit": {
+    "seed": 42,
+    "original_train": 12548,
+    "test": 3000,
+    "train_test_overlap_removed": 4,
+    "train_duplicates_removed": 67,
+    "test_duplicate_texts": 6,
+    "train": 10605,
+    "validation": 1872
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6673766357052275,
+      "validation_sentiment_macro_f1": 0.7260057282681606
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.43414895970344486,
+      "validation_sentiment_macro_f1": 0.7216354318946707
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3056576065555784,
+      "validation_sentiment_macro_f1": 0.7114800920430736
+    }
+  ],
+  "test": {
+    "n": 3000,
+    "sentiment_macro_f1": 0.6571184162682119,
+    "sentiment_accuracy": 0.719,
+    "sentiment_report": {
+      "negative": {
+        "precision": 0.75682637815559,
+        "recall": 0.875968992248062,
+        "f1-score": 0.8120508568269762,
+        "support": 1677.0
+      },
+      "neutral": {
+        "precision": 0.6099137931034483,
+        "recall": 0.3783422459893048,
+        "f1-score": 0.466996699669967,
+        "support": 748.0
+      },
+      "positive": {
+        "precision": 0.680672268907563,
+        "recall": 0.7043478260869566,
+        "f1-score": 0.6923076923076923,
+        "support": 575.0
+      },
+      "accuracy": 0.719,
+      "macro avg": {
+        "precision": 0.6824708133888672,
+        "recall": 0.6528863547747745,
+        "f1-score": 0.6571184162682119,
+        "support": 3000.0
+      },
+      "weighted avg": {
+        "precision": 0.7055999693433841,
+        "recall": 0.719,
+        "f1-score": 0.7030665804429658,
+        "support": 3000.0
+      }
+    },
+    "by_dialect": {
+      "egypt": {
+        "n": 306,
+        "sentiment_macro_f1": 0.4816043747807342
+      },
+      "gulf": {
+        "n": 322,
+        "sentiment_macro_f1": 0.5815276971414098
+      },
+      "levant": {
+        "n": 47,
+        "sentiment_macro_f1": 0.6503465235859602
+      },
+      "magreb": {
+        "n": 2,
+        "sentiment_macro_f1": 0.0
+      },
+      "msa": {
+        "n": 2323,
+        "sentiment_macro_f1": 0.6895443986120963
+      }
+    }
+  }
+}

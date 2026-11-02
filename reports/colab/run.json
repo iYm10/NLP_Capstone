@@ -1,0 +1,8 @@
+{
+  "run_id": "20261102T192207Z",
+  "model_revision": "88e1fa192dd723cf0b3563500aec46209762eb22",
+  "python": "3.13.16",
+  "torch": "2.11.0+cu130",
+  "gpu": "Tesla T4",
+  "source_commit": "fb6e0869252128598d6eb962643331d8d4a20776"
+}

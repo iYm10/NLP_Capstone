@@ -2,7 +2,7 @@
 
 Understand sentiment behind Arabic sarcasm with a reproducible NLP capstone.
 
-> **Execution status:** The CPU notebook trains and evaluates a TF-IDF baseline on ArSarcasm-v2. MARBERT joint fine-tuning and its sentiment-only control are implemented, but full MARBERT training has **not** been executed: this environment has no GPU and its network policy blocks Hugging Face downloads. See [the experiment report](reports/EXPERIMENT_REPORT.md) for measured results and exact limitations.
+> **Execution status:** The CPU baseline notebook was executed locally. User-supplied Colab reports record completed MARBERT training on Tesla T4 (seed 42): joint sentiment macro-F1 **65.57%**, sentiment-only **65.71%**, and joint sarcasm F1 **58.56%**. Reports are in `reports/colab`. Checkpoint weights and the executed GPU notebook were not included in the upload; neural inference has not been independently reproduced here.
 
 ## Research question
 
@@ -60,7 +60,7 @@ python -m maqsad.train --task joint --output artifacts/marbert-joint
 
 For strict comparisons use the same `--revision <Hugging-Face-commit>`, `--seed`, epochs, batch size and sequence length for both commands. `notebooks/02_marbert_finetuning.ipynb` resolves one immutable model revision and runs both experiments. Default settings: three epochs, batch size eight, maximum length 128, AdamW learning rate 2e-5. Memory requirements depend on the GPU; reduce batch size when necessary. CPU fine-tuning is supported by the CLI but can be very slow.
 
-Each run saves `weights.pt`, tokenizer files, encoder configuration and `metrics.json` in its output folder. Separate output folders are required for separate tasks/seeds. Metrics include the resolved model revision when available. No fine-tuned weights or MARBERT scores are published in this version.
+Each run saves `weights.pt`, tokenizer files, encoder configuration and `metrics.json` in its output folder. Separate output folders are required for separate tasks/seeds. Metrics include the resolved model revision when available. Aggregate MARBERT scores are published in `reports/colab`; fine-tuned weights remain in the training Drive folder.
 
 ```python
 from maqsad.inference import predict_transformer
@@ -118,3 +118,9 @@ Abu Farha, Ibrahim; Zaghouani, Wajdi; and Magdy, Walid. 2021. [Overview of the W
 Abdul-Mageed, Muhammad; Elmadany, AbdelRahim; and Nagoudi, El Moatez Billah. 2021. [ARBERT & MARBERT: Deep Bidirectional Transformers for Arabic](https://aclanthology.org/2021.acl-long.551/).
 
 The upstream dataset repository provides an MIT license; its notice is retained in `docs/ARSARCASM_LICENSE.txt`. Raw tweets are not redistributed in this repository. The pretrained model has its own model card and terms.
+
+## Interactive dashboard
+
+Run `streamlit run app.py`. The dashboard includes a single-text playground, batch analysis (one text per line), CSV export, and recorded benchmark comparisons. Its English interface supports right-to-left Arabic input.
+
+The baseline works after `python -m maqsad.baseline`. To enable trained MARBERT, copy the **entire** `marbert-joint` checkpoint directory from your training Drive folder to `artifacts/marbert-joint`, or set `MAQSAD_CHECKPOINT` to its absolute path. Include weights.pt, metrics.json, config.json and all tokenizer files. Install the train extra with `pip install -e ".[train,app]"`. The model selector identifies which model actually runs; uploaded aggregate metrics alone do not enable inference. Only use trusted checkpoint files.
