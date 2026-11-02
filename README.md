@@ -48,6 +48,8 @@ The runner saves outputs into `notebooks/01_data_and_baseline.ipynb` and fails o
 
 ## Full fine-tuning
 
+[Open the training notebook in Google Colab](https://colab.research.google.com/github/iYm10/NLP_Capstone/blob/main/notebooks/02_marbert_finetuning.ipynb). Select a GPU runtime and run the cells in order. The notebook automatically clones this repository and asks you to authorize Google Drive storage. Checkpoints are written directly to a timestamped `MyDrive/Maqsad/artifacts` directory. At completion, a small metrics archive is exported for GitHub; large weights remain in Drive. Save the executed notebook separately. These Colab-specific steps are prepared but have not been executed from this environment.
+
 Use a GPU runtime with access to Hugging Face. Install the PyTorch build appropriate to that runtime, then:
 
 ```bash
