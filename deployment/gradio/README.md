@@ -1,7 +1,7 @@
 ---
 title: Maqsad
 emoji: 💬
-colorFrom: teal
+colorFrom: green
 colorTo: purple
 sdk: gradio
 sdk_version: 5.49.1
