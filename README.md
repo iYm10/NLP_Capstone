@@ -124,3 +124,11 @@ The upstream dataset repository provides an MIT license; its notice is retained 
 Run `streamlit run app.py`. The dashboard includes a single-text playground, batch analysis (one text per line), CSV export, and recorded benchmark comparisons. Its English interface supports right-to-left Arabic input.
 
 The baseline works after `python -m maqsad.baseline`. To enable trained MARBERT, copy the **entire** `marbert-joint` checkpoint directory from your training Drive folder to `artifacts/marbert-joint`, or set `MAQSAD_CHECKPOINT` to its absolute path. Include weights.pt, metrics.json, config.json and all tokenizer files. Install the train extra with `pip install -e ".[train,app]"`. The model selector identifies which model actually runs; uploaded aggregate metrics alone do not enable inference. Only use trusted checkpoint files.
+
+## Streamlit Community Cloud deployment
+
+Select this GitHub repository, branch `main`, entry point `app.py`, and Python 3.12. The root `requirements.txt` installs the package and app/training dependencies. No secret is required for the baseline. On a fresh instance, use **Prepare baseline model** in the sidebar; this downloads the checksum-verified dataset and trains the lightweight model. It can take several minutes and needs outbound access to raw.githubusercontent.com. Generated files may need rebuilding after the host restarts.
+
+The uploaded `artifacts/marbert-joint` folder currently contains configuration, metrics and tokenizer files but **does not contain weights.pt**. Those metadata files alone cannot perform MARBERT inference. The app lists missing files explicitly. For local deployment, place the trained weights.pt alongside the uploaded files. For hosted deployment, provision the complete checkpoint on the hosting machine and optionally set MAQSAD_CHECKPOINT to its directory. Merely keeping weights on your Windows PC does not make them available to Streamlit Cloud. Large weights should be distributed using an appropriate model/artifact host, not ordinary Git commits.
+
+Full MARBERT is a large CPU model and may exceed small free-host memory limits. Hosting readiness for MARBERT has not been verified without the weights. The baseline and benchmark viewer are independently usable.

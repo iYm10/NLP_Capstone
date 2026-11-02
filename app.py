@@ -38,7 +38,9 @@ def benchmarks():
     return pd.DataFrame(records)
 
 checkpoint = Path(os.environ.get('MAQSAD_CHECKPOINT', str(ROOT/'artifacts/marbert-joint')))
-ready_joint = all((checkpoint/f).is_file() for f in ['weights.pt','metrics.json','config.json','tokenizer_config.json'])
+required_files = ['weights.pt', 'metrics.json', 'config.json', 'tokenizer_config.json']
+missing_files = [name for name in required_files if not (checkpoint/name).is_file()]
+ready_joint = not missing_files
 options = ['TF-IDF baseline']
 if ready_joint:
     options.insert(0, 'MARBERT joint')
@@ -49,7 +51,17 @@ with st.sidebar:
     engine = st.selectbox('Analysis model', options)
     st.caption('The selected model is used for both single and batch analysis.')
     if not ready_joint:
-        st.info('MARBERT results are available in Benchmarks. Live MARBERT analysis needs the trained checkpoint.')
+        st.info('MARBERT inference is not ready. Missing checkpoint files: ' + ', '.join(missing_files))
+    if not (ROOT/'artifacts/baseline.joblib').exists():
+        st.caption('Prepare the lightweight baseline to try the app while the neural checkpoint is unavailable.')
+        if st.button('Prepare baseline model'):
+            try:
+                from maqsad.baseline import train_baseline
+                with st.spinner('Downloading verified data and training the baseline. This may take several minutes…'):
+                    train_baseline(data_dir=str(ROOT/'data/raw'), output=str(ROOT/'artifacts/baseline.joblib'), report_dir=str(ROOT/'artifacts/baseline-run'))
+                st.success('Baseline ready. You can now analyze text.')
+            except Exception as error:
+                st.error(f'Baseline preparation failed: {error}')
     st.divider()
     st.markdown('**How to read the results**')
     st.caption('Sarcasm and sentiment are separate predictions. A positive phrase can express a negative opinion.')

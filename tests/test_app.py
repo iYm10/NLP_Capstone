@@ -35,3 +35,17 @@ def test_batch_limits_and_results(monkeypatch):
     next(b for b in app.button if b.label=='Analyze collection →').click().run()
     assert not app.exception
     assert any(m.label=='Texts analyzed' and m.value=='2' for m in app.metric)
+
+
+def test_fresh_host_prepares_baseline(monkeypatch):
+    original = Path.exists
+    monkeypatch.setattr(Path, 'exists', lambda p: False if p.name == 'baseline.joblib' else original(p))
+    calls = []
+    monkeypatch.setattr(maqsad.baseline, 'train_baseline', lambda **kwargs: calls.append(kwargs))
+    app = AppTest.from_file(str(Path(__file__).resolve().parents[1] / 'app.py'), default_timeout=20).run()
+    assert any('weights.pt' in info.value for info in app.info)
+    next(b for b in app.button if b.label == 'Prepare baseline model').click().run()
+    assert not app.exception
+    assert len(calls) == 1
+    assert calls[0]['output'].endswith('artifacts/baseline.joblib')
+    assert any('Baseline ready' in success.value for success in app.success)
