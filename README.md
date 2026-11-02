@@ -174,7 +174,7 @@ The dataset repository's license notice is retained in [docs/ARSARCASM_LICENSE.t
 
 ## Gradio on Hugging Face Spaces
 
-The Gradio interface uses the same trained model and shared source package as Streamlit. It includes single-text analysis, batch analysis, and experiment results. CPU inference is supported; on ZeroGPU, GPU work runs inside a `spaces.GPU` function with one inference request at a time. The checkpoint loads before the timed GPU request.
+The Gradio interface uses the same trained model and shared source package as Streamlit. It includes interactive examples, a live text counter, result cards, expandable score distributions, batch summaries, CSV downloads, and experiment results. CPU inference is supported; on ZeroGPU, GPU work runs inside a `spaces.GPU` function with one inference request at a time. The checkpoint loads before the timed GPU request.
 
 To run locally:
 
