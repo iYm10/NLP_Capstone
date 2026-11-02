@@ -1,0 +1,303 @@
+{
+  "model": "tfidf_independent_heads",
+  "audit": {
+    "seed": 42,
+    "original_train": 12548,
+    "test": 3000,
+    "train_test_overlap_removed": 4,
+    "train_duplicates_removed": 67,
+    "test_duplicate_texts": 6,
+    "train": 10605,
+    "validation": 1872
+  },
+  "validation_selection": {
+    "sarcasm_C=0.5": 0.5319396051103368,
+    "sarcasm_C=2.0": 0.5449804432855281,
+    "sarcasm_C=8.0": 0.5157593123209169,
+    "sentiment_C=0.5": 0.683139673889472,
+    "sentiment_C=2.0": 0.68538194280401,
+    "sentiment_C=8.0": 0.6731397082585007
+  },
+  "validation": {
+    "n": 1872,
+    "sarcasm_f1": 0.5449804432855281,
+    "sarcasm_macro_f1": 0.7138741652101137,
+    "sentiment_macro_f1": 0.68538194280401,
+    "sentiment_accuracy": 0.7083333333333334,
+    "sarcasm_report": {
+      "not_sarcastic": {
+        "precision": 0.9195241427571729,
+        "recall": 0.8488372093023255,
+        "f1-score": 0.8827678871346993,
+        "support": 1548.0
+      },
+      "sarcastic": {
+        "precision": 0.4717832957110609,
+        "recall": 0.6450617283950617,
+        "f1-score": 0.5449804432855281,
+        "support": 324.0
+      },
+      "accuracy": 0.8135683760683761,
+      "macro avg": {
+        "precision": 0.6956537192341169,
+        "recall": 0.7469494688486936,
+        "f1-score": 0.7138741652101137,
+        "support": 1872.0
+      },
+      "weighted avg": {
+        "precision": 0.8420305346145767,
+        "recall": 0.8135683760683761,
+        "f1-score": 0.8243046756992658,
+        "support": 1872.0
+      }
+    },
+    "sentiment_report": {
+      "negative": {
+        "precision": 0.6923076923076923,
+        "recall": 0.7587209302325582,
+        "f1-score": 0.723994452149792,
+        "support": 688.0
+      },
+      "neutral": {
+        "precision": 0.769811320754717,
+        "recall": 0.7132867132867133,
+        "f1-score": 0.7404718693284936,
+        "support": 858.0
+      },
+      "positive": {
+        "precision": 0.5944272445820433,
+        "recall": 0.588957055214724,
+        "f1-score": 0.5916795069337443,
+        "support": 326.0
+      },
+      "accuracy": 0.7083333333333334,
+      "macro avg": {
+        "precision": 0.6855154192148175,
+        "recall": 0.6869882329113318,
+        "f1-score": 0.68538194280401,
+        "support": 1872.0
+      },
+      "weighted avg": {
+        "precision": 0.7107847688295864,
+        "recall": 0.7083333333333334,
+        "f1-score": 0.7085045759739877,
+        "support": 1872.0
+      }
+    },
+    "by_dialect": {
+      "egypt": {
+        "n": 398,
+        "sarcasm_f1": 0.6563467492260062,
+        "sentiment_macro_f1": 0.6790187835179347
+      },
+      "gulf": {
+        "n": 109,
+        "sarcasm_f1": 0.5454545454545454,
+        "sentiment_macro_f1": 0.6017829900839055
+      },
+      "levant": {
+        "n": 102,
+        "sarcasm_f1": 0.4090909090909091,
+        "sentiment_macro_f1": 0.6793883234322546
+      },
+      "magreb": {
+        "n": 6,
+        "sarcasm_f1": 1.0,
+        "sentiment_macro_f1": 0.26666666666666666
+      },
+      "msa": {
+        "n": 1257,
+        "sarcasm_f1": 0.4451219512195122,
+        "sentiment_macro_f1": 0.676687693644659
+      }
+    }
+  },
+  "test": {
+    "n": 3000,
+    "sarcasm_f1": 0.5404232230059686,
+    "sarcasm_macro_f1": 0.6683352583637012,
+    "sentiment_macro_f1": 0.5674505979579981,
+    "sentiment_accuracy": 0.636,
+    "sarcasm_report": {
+      "not_sarcastic": {
+        "precision": 0.8367037411526794,
+        "recall": 0.7595227168425883,
+        "f1-score": 0.7962472937214338,
+        "support": 2179.0
+      },
+      "sarcastic": {
+        "precision": 0.487279843444227,
+        "recall": 0.6065773447015834,
+        "f1-score": 0.5404232230059686,
+        "support": 821.0
+      },
+      "accuracy": 0.7176666666666667,
+      "macro avg": {
+        "precision": 0.6619917922984532,
+        "recall": 0.6830500307720859,
+        "f1-score": 0.6683352583637012,
+        "support": 3000.0
+      },
+      "weighted avg": {
+        "precision": 0.7410780678131329,
+        "recall": 0.7176666666666667,
+        "f1-score": 0.7262367730356348,
+        "support": 3000.0
+      }
+    },
+    "sentiment_report": {
+      "negative": {
+        "precision": 0.7366914710933028,
+        "recall": 0.7674418604651163,
+        "f1-score": 0.7517523364485982,
+        "support": 1677.0
+      },
+      "neutral": {
+        "precision": 0.5518867924528302,
+        "recall": 0.31283422459893045,
+        "f1-score": 0.3993174061433447,
+        "support": 748.0
+      },
+      "positive": {
+        "precision": 0.46682750301568154,
+        "recall": 0.6730434782608695,
+        "f1-score": 0.5512820512820513,
+        "support": 575.0
+      },
+      "accuracy": 0.636,
+      "macro avg": {
+        "precision": 0.5851352555206049,
+        "recall": 0.5844398544416388,
+        "f1-score": 0.5674505979579981,
+        "support": 3000.0
+      },
+      "weighted avg": {
+        "precision": 0.6388895773374009,
+        "recall": 0.636,
+        "f1-score": 0.6254550891689001,
+        "support": 3000.0
+      }
+    },
+    "by_dialect": {
+      "egypt": {
+        "n": 306,
+        "sarcasm_f1": 0.6703910614525139,
+        "sentiment_macro_f1": 0.35853979883672354
+      },
+      "gulf": {
+        "n": 322,
+        "sarcasm_f1": 0.4028776978417266,
+        "sentiment_macro_f1": 0.5023529923900056
+      },
+      "levant": {
+        "n": 47,
+        "sarcasm_f1": 0.45714285714285713,
+        "sentiment_macro_f1": 0.4373279310165706
+      },
+      "magreb": {
+        "n": 2,
+        "sarcasm_f1": 0.0,
+        "sentiment_macro_f1": 0.0
+      },
+      "msa": {
+        "n": 2323,
+        "sarcasm_f1": 0.5225362872421696,
+        "sentiment_macro_f1": 0.5955400061622852
+      }
+    }
+  },
+  "majority_test": {
+    "n": 3000,
+    "sarcasm_f1": 0.0,
+    "sarcasm_macro_f1": 0.42073759413014095,
+    "sentiment_macro_f1": 0.13304873710423337,
+    "sentiment_accuracy": 0.24933333333333332,
+    "sarcasm_report": {
+      "not_sarcastic": {
+        "precision": 0.7263333333333334,
+        "recall": 1.0,
+        "f1-score": 0.8414751882602819,
+        "support": 2179.0
+      },
+      "sarcastic": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 821.0
+      },
+      "accuracy": 0.7263333333333334,
+      "macro avg": {
+        "precision": 0.3631666666666667,
+        "recall": 0.5,
+        "f1-score": 0.42073759413014095,
+        "support": 3000.0
+      },
+      "weighted avg": {
+        "precision": 0.5275601111111111,
+        "recall": 0.7263333333333334,
+        "f1-score": 0.6111914784063848,
+        "support": 3000.0
+      }
+    },
+    "sentiment_report": {
+      "negative": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 1677.0
+      },
+      "neutral": {
+        "precision": 0.24933333333333332,
+        "recall": 1.0,
+        "f1-score": 0.3991462113127001,
+        "support": 748.0
+      },
+      "positive": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 575.0
+      },
+      "accuracy": 0.24933333333333332,
+      "macro avg": {
+        "precision": 0.08311111111111111,
+        "recall": 0.3333333333333333,
+        "f1-score": 0.13304873710423337,
+        "support": 3000.0
+      },
+      "weighted avg": {
+        "precision": 0.062167111111111104,
+        "recall": 0.24933333333333332,
+        "f1-score": 0.09952045535396656,
+        "support": 3000.0
+      }
+    },
+    "by_dialect": {
+      "egypt": {
+        "n": 306,
+        "sarcasm_f1": 0.0,
+        "sentiment_macro_f1": 0.16420361247947454
+      },
+      "gulf": {
+        "n": 322,
+        "sarcasm_f1": 0.0,
+        "sentiment_macro_f1": 0.162754303599374
+      },
+      "levant": {
+        "n": 47,
+        "sarcasm_f1": 0.0,
+        "sentiment_macro_f1": 0.19191919191919193
+      },
+      "magreb": {
+        "n": 2,
+        "sarcasm_f1": 0.0,
+        "sentiment_macro_f1": 0.3333333333333333
+      },
+      "msa": {
+        "n": 2323,
+        "sarcasm_f1": 0.0,
+        "sentiment_macro_f1": 0.12251112672757086
+      }
+    }
+  }
+}
