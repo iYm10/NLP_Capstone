@@ -129,7 +129,7 @@ The baseline works after `python -m maqsad.baseline`. To enable trained MARBERT,
 
 Select this GitHub repository, branch `main`, entry point `app.py`, and Python 3.12. The root `requirements.txt` installs the package and app/training dependencies. No secret is required for the baseline. On a fresh instance, use **Prepare baseline model** in the sidebar; this downloads the checksum-verified dataset and trains the lightweight model. It can take several minutes and needs outbound access to raw.githubusercontent.com. Generated files may need rebuilding after the host restarts.
 
-The uploaded `artifacts/marbert-joint` folder currently contains configuration, metrics and tokenizer files but **does not contain weights.pt**. Those metadata files alone cannot perform MARBERT inference. The app lists missing files explicitly. For local deployment, place the trained weights.pt alongside the uploaded files. For hosted deployment, provision the complete checkpoint on the hosting machine and optionally set MAQSAD_CHECKPOINT to its directory. Merely keeping weights on your Windows PC does not make them available to Streamlit Cloud. Large weights should be distributed using an appropriate model/artifact host, not ordinary Git commits.
+Model files are hosted separately at `yahya-ai10/maqsad-marbert` and are downloaded automatically on the first MARBERT analysis. They do not need to be committed to GitHub. A complete local checkpoint can optionally be supplied through MAQSAD_CHECKPOINT. See the hosted-checkpoint section below for caching and revision configuration.
 
 Full MARBERT is a large CPU model and may exceed small free-host memory limits. Hosting readiness for MARBERT has not been verified without the weights. The baseline and benchmark viewer are independently usable.
 
@@ -143,6 +143,6 @@ Optional environment settings:
 - `MAQSAD_MODEL_REVISION`: defaults to `main`; use an immutable Hub commit for reproducible deployment.
 - `MAQSAD_CHECKPOINT`: complete local checkpoint directory, if available.
 
-The hosted upload was reported successful by the user. This environment still blocks Hugging Face, so the actual hosted weights have not been downloaded or independently evaluated here. Tests cover local priority, the download configuration, incomplete-checkpoint rejection and offline model inference. The earlier deployment section's manual-provisioning requirement is superseded by this automatic download route.
+The hosted upload was reported successful by the user. This environment still blocks Hugging Face, so the actual hosted weights have not been downloaded or independently evaluated here. Tests cover local priority, the download configuration, incomplete-checkpoint rejection and offline model inference.
 
 The project constrains `huggingface-hub` below version 1 for compatibility with Transformers 4.x. The Colab upload warning about Hub 2.4 versus datasets does not invalidate a successful upload. No retraining or re-upload is required just because of that warning.
