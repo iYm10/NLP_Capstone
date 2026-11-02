@@ -1,6 +1,6 @@
 # Updated Colab experiment results
 
-User-supplied `maqsad-results.zip` contains aggregate metrics and run metadata for both three-epoch MARBERT runs on Tesla T4, seed 42. The reported split audit matches the local baseline. These reports have been inspected but predictions have not been independently regenerated: weights and the executed GPU notebook were not supplied.
+User-supplied `maqsad-results.zip` contains aggregate metrics and run metadata for both three-epoch MARBERT runs on Tesla T4, seed 42. The reported split audit matches the local baseline. These reports have been inspected but predictions have not been independently regenerated: checkpoint weights were not supplied. The user subsequently saved the executed GPU notebook to GitHub; it has been merged and checked for execution counts and saved errors (nine executed code cells, no saved errors).
 
 | Model | Sentiment macro-F1 | Sarcastic-class F1 |
 |---|---:|---:|

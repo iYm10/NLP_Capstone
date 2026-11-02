@@ -2,7 +2,7 @@
 
 Understand sentiment behind Arabic sarcasm with a reproducible NLP capstone.
 
-> **Execution status:** The CPU baseline notebook was executed locally. User-supplied Colab reports record completed MARBERT training on Tesla T4 (seed 42): joint sentiment macro-F1 **65.57%**, sentiment-only **65.71%**, and joint sarcasm F1 **58.56%**. Reports are in `reports/colab`. Checkpoint weights and the executed GPU notebook were not included in the upload; neural inference has not been independently reproduced here.
+> **Execution status:** The CPU baseline notebook was executed locally. User-supplied Colab reports record completed MARBERT training on Tesla T4 (seed 42): joint sentiment macro-F1 **65.57%**, sentiment-only **65.71%**, and joint sarcasm F1 **58.56%**. Reports are in `reports/colab`. The user-executed GPU notebook is preserved in the repository (all nine code cells have outputs and no saved errors). Checkpoint weights were not supplied; neural inference has not been independently reproduced here.
 
 ## Research question
 
